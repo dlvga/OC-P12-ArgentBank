@@ -1,0 +1,27 @@
+# Dependencies
+node_modules/
+
+# Environment variables
+.env
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+
+# Runtime data
+pids/
+*.pid
+*.seed
+
+# Coverage
+coverage/
+lib-cov/
+
+# Build
+build/Release
+.grunt
+
+# Misc
+.lock-wscript
+config/runtime.yaml
