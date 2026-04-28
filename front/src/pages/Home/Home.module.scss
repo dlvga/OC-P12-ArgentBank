@@ -1,0 +1,88 @@
+@use '../../styles/variables' as *;
+@use '../../styles/mixins' as *;
+
+.srOnly {
+  @include sr-only;
+}
+
+// ── Hero ──────────────────────────────────────────────────────────────────────
+.hero {
+  background-image: url('/img/bank-tree.jpeg');
+  background-position: 0 -50px;
+  background-size: cover;
+  background-repeat: no-repeat;
+  height: 300px;
+  position: relative;
+
+  @include respond-lg {
+    height: 400px;
+    background-position: 0 33%;
+  }
+}
+
+.heroContent {
+  position: relative;
+  top: 2rem;
+  width: 200px;
+  background: $color-white;
+  padding: 2rem;
+  text-align: left;
+  margin: 0 auto;
+
+  @include respond-lg {
+    position: absolute;
+    top: 50px;
+    right: 50px;
+    width: 300px;
+    margin: 2rem;
+  }
+}
+
+.subtitle {
+  font-weight: bold;
+  font-size: 1rem;
+  margin: 0;
+
+  @include respond-lg {
+    font-size: 1.5rem;
+  }
+}
+
+.text {
+  margin-bottom: 0;
+  font-size: 0.9rem;
+
+  @include respond-lg {
+    font-size: 1.2rem;
+  }
+}
+
+// ── Features ──────────────────────────────────────────────────────────────────
+.features {
+  display: flex;
+  flex-direction: column;
+
+  @include respond-lg {
+    flex-direction: row;
+  }
+}
+
+.featureItem {
+  flex: 1;
+  padding: 2.5rem;
+  text-align: center;
+}
+
+.featureIcon {
+  width: 100px;
+  border: 10px solid $color-primary;
+  border-radius: 50%;
+  padding: 1rem;
+}
+
+.featureItemTitle {
+  color: $color-text-dark;
+  font-size: 1.25rem;
+  font-weight: bold;
+  margin-bottom: 0.5rem;
+}
