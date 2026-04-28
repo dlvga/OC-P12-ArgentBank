@@ -1,7 +1,7 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import Home from '../pages/Home/Home'
-import Login from '../pages/Login'
-import Profile from '../pages/Profile'
+import Login from '../pages/Login/Login'
+import Profile from '../pages/Profile/Profile'
 import Layout from "../components/Layout/Layout.jsx";
 
 function AppRouter() {

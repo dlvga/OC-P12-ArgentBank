@@ -1,0 +1,60 @@
+@use '../../styles/variables' as *;
+
+.bgDark {
+  flex: 1;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+}
+
+.signInContent {
+  box-sizing: border-box;
+  background-color: $color-white;
+  width: 300px;
+  margin-top: 3rem;
+  margin-bottom: 3rem;
+  padding: 2rem;
+  text-align: center;
+}
+
+.signInIcon {
+  font-size: 5rem;
+}
+
+.inputWrapper {
+  display: flex;
+  flex-direction: column;
+  text-align: left;
+  margin-bottom: 1rem;
+
+  label {
+    font-weight: bold;
+  }
+
+  input {
+    padding: 5px;
+    font-size: 1.2rem;
+  }
+}
+
+.inputRemember {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  text-align: left;
+  margin-bottom: 1rem;
+}
+
+.signInButton {
+  display: block;
+  width: 100%;
+  padding: 8px;
+  font-size: 1.1rem;
+  font-weight: bold;
+  margin-top: 1rem;
+  border-color: $color-primary;
+  background-color: $color-primary;
+  color: $color-white;
+  cursor: pointer;
+  border-style: solid;
+}

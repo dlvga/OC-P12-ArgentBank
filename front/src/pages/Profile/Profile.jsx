@@ -1,5 +1,5 @@
 function Profile() {
-  return <main />
+  return null
 }
 
 export default Profile
