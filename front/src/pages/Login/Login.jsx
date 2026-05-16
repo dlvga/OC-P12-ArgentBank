@@ -1,12 +1,25 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
+import { useDispatch, useSelector } from 'react-redux'
+import { useNavigate } from 'react-router-dom'
+import { loginAsync } from '../../store/slices/authSlice'
 import styles from './Login.module.scss'
 
 function Login() {
+  const dispatch = useDispatch()
+  const navigate = useNavigate()
+  const { isAuthenticated, loading, error } = useSelector((state) => state.auth)
+
   const [formData, setFormData] = useState({
     email: '',
     password: '',
     rememberMe: false,
   })
+
+  useEffect(() => {
+    if (isAuthenticated) {
+      navigate('/profile')
+    }
+  }, [isAuthenticated, navigate])
 
   function handleChange(e) {
     const { name, value, type, checked } = e.target
@@ -16,9 +29,9 @@ function Login() {
     }))
   }
 
-  function handleSubmit(e) {
+  async function handleSubmit(e) {
     e.preventDefault()
-    console.log('Login submit:', formData)
+    dispatch(loginAsync({ email: formData.email, password: formData.password, rememberMe: formData.rememberMe }))
   }
 
   return (
@@ -59,10 +72,11 @@ function Login() {
             />
             <label htmlFor="remember-me">Remember me</label>
           </div>
-          <button type="submit" className={styles.signInButton}>
-            Sign In
+          <button type="submit" className={styles.signInButton} disabled={loading}>
+            {loading ? 'Connexion…' : 'Sign In'}
           </button>
         </form>
+        {error && <p className={styles.errorMessage}>{error}</p>}
       </section>
     </div>
   )

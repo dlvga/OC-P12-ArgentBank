@@ -7,8 +7,14 @@ const api = axios.create({
   },
 })
 
+let storeRef = null
+
+export const injectStore = (store) => {
+  storeRef = store
+}
+
 api.interceptors.request.use((config) => {
-  const token = localStorage.getItem('token')
+  const token = storeRef?.getState().auth.token ?? localStorage.getItem('token')
   if (token) {
     config.headers.Authorization = `Bearer ${token}`
   }
@@ -17,7 +23,7 @@ api.interceptors.request.use((config) => {
 
 export const loginUser = (credentials) => api.post('/user/login', credentials)
 
-export const getUserProfile = () => api.get('/user/profile')
+export const getUserProfile = () => api.post('/user/profile')
 
 export const updateUserProfile = (data) => api.put('/user/profile', data)
 
