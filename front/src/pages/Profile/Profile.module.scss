@@ -1,1 +1,106 @@
-// styles
+@use '../../styles/variables' as *;
+@use '../../styles/mixins' as *;
+
+.bgDark {
+  background-color: $color-dark-bg;
+  flex: 1;
+}
+
+.header {
+  color: $color-white;
+  margin-bottom: 2rem;
+  padding: 2rem 2rem 0;
+  text-align: center;
+
+  h1 {
+    font-size: 1.8rem;
+    font-weight: 700;
+    margin-bottom: 1rem;
+  }
+}
+
+.editButton {
+  background-color: $color-primary;
+  border-color: $color-primary;
+  color: $color-white;
+  cursor: pointer;
+  font-weight: bold;
+  padding: 10px;
+
+  &:hover {
+    opacity: 0.85;
+  }
+}
+
+.srOnly {
+  @include sr-only;
+}
+
+.account {
+  background-color: $color-white;
+  border: 1px solid $color-black;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  margin: 0 auto 2rem;
+  padding: 1.5rem;
+  text-align: left;
+  width: 80%;
+
+  @include respond-md {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+  }
+}
+
+.accountContentWrapper {
+  flex: 1;
+
+  @include respond-md {
+    &.cta {
+      flex: 0;
+    }
+  }
+}
+
+.accountTitle {
+  font-size: 1rem;
+  font-weight: 400;
+  margin: 0 0 0.25rem;
+}
+
+.accountAmount {
+  color: $color-text-dark;
+  font-size: 2.5rem;
+  font-weight: 700;
+  margin: 0;
+}
+
+.accountAmountDescription {
+  color: $color-text;
+  font-size: 0.875rem;
+  margin: 0;
+}
+
+.transactionButton {
+  background-color: $color-primary;
+  border-color: $color-primary;
+  color: $color-white;
+  cursor: pointer;
+  display: block;
+  font-size: 1.1rem;
+  font-weight: bold;
+  margin-top: 1rem;
+  padding: 8px;
+  width: 100%;
+
+  &:hover {
+    opacity: 0.85;
+  }
+
+  @include respond-md {
+    width: 200px;
+  }
+}

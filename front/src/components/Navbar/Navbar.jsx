@@ -1,10 +1,19 @@
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
+import { useSelector, useDispatch } from 'react-redux'
+import { logout } from '../../store/slices/authSlice'
 import styles from './Navbar.module.scss'
 
-const isAuthenticated = false
-const userName = 'Tony'
-
 function Navbar() {
+  const dispatch = useDispatch()
+  const navigate = useNavigate()
+  const isAuthenticated = useSelector((state) => state.auth.isAuthenticated)
+  const user = useSelector((state) => state.auth.user)
+
+  function handleSignOut() {
+    dispatch(logout())
+    navigate('/')
+  }
+
   return (
     <nav className={styles.mainNav}>
       <Link to="/" className={styles.mainNavLogo}>
@@ -21,12 +30,12 @@ function Navbar() {
           <>
             <Link to="/profile" className={styles.mainNavItem}>
               <i className="fa fa-user-circle" />
-              {' '}{userName}
+              {' '}{user?.firstName}
             </Link>
-            <Link to="/" className={styles.mainNavItem}>
+            <button className={styles.mainNavItem} onClick={handleSignOut}>
               <i className="fa fa-sign-out" />
               {' '}Sign Out
-            </Link>
+            </button>
           </>
         ) : (
           <Link to="/login" className={styles.mainNavItem}>
