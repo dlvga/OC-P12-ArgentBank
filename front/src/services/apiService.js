@@ -25,6 +25,7 @@ export const loginUser = (credentials) => api.post('/user/login', credentials)
 
 export const getUserProfile = () => api.post('/user/profile')
 
-export const updateUserProfile = (data) => api.put('/user/profile', data)
+export const updateUserProfile = (firstName, lastName) =>
+  api.put('/user/profile', { firstName, lastName })
 
 export default api

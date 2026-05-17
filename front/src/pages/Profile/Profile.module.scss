@@ -32,6 +32,51 @@
   }
 }
 
+.editForm {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.editInputs {
+  display: flex;
+  gap: 1rem;
+}
+
+.editInput {
+  background-color: $color-white;
+  border: 1px solid $color-black;
+  font-size: 1.1rem;
+  padding: 6px 10px;
+  width: 150px;
+}
+
+.editActions {
+  display: flex;
+  gap: 1rem;
+}
+
+.editActionButton {
+  background-color: $color-white;
+  border: 2px solid $color-primary;
+  color: $color-primary;
+  cursor: pointer;
+  font-size: 1rem;
+  font-weight: bold;
+  padding: 8px 24px;
+
+  &:hover:not(:disabled) {
+    background-color: $color-primary;
+    color: $color-white;
+  }
+
+  &:disabled {
+    cursor: not-allowed;
+    opacity: 0.6;
+  }
+}
+
 .srOnly {
   @include sr-only;
 }

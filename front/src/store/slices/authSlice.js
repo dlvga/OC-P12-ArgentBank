@@ -1,5 +1,5 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
-import { loginUser, getUserProfile } from '../../services/apiService'
+import { loginUser, getUserProfile, updateUserProfile } from '../../services/apiService'
 
 // ── Async thunks ──────────────────────────────────────────────────────────────
 
@@ -33,6 +33,20 @@ export const fetchUserProfile = createAsyncThunk(
     } catch (err) {
       const message =
         err.response?.data?.message || 'Session expirée. Veuillez vous reconnecter.'
+      return rejectWithValue(message)
+    }
+  }
+)
+
+export const updateProfileAsync = createAsyncThunk(
+  'auth/updateProfileAsync',
+  async ({ firstName, lastName }, { rejectWithValue }) => {
+    try {
+      const res = await updateUserProfile(firstName, lastName)
+      return res.data.body
+    } catch (err) {
+      const message =
+        err.response?.data?.message || 'Impossible de mettre à jour le profil.'
       return rejectWithValue(message)
     }
   }
@@ -98,6 +112,22 @@ const authSlice = createSlice({
         state.user = null
         state.token = null
         localStorage.removeItem('token')
+      })
+
+    // updateProfileAsync
+    builder
+      .addCase(updateProfileAsync.pending, (state) => {
+        state.loading = true
+        state.error = null
+      })
+      .addCase(updateProfileAsync.fulfilled, (state, action) => {
+        state.loading = false
+        state.user.firstName = action.payload.firstName
+        state.user.lastName = action.payload.lastName
+      })
+      .addCase(updateProfileAsync.rejected, (state, action) => {
+        state.loading = false
+        state.error = action.payload
       })
   },
 })

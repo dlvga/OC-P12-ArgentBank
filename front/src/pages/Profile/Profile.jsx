@@ -1,4 +1,6 @@
-import { useSelector } from 'react-redux'
+import { useState } from 'react'
+import { useSelector, useDispatch } from 'react-redux'
+import { updateProfileAsync } from '../../store/slices/authSlice'
 import styles from './Profile.module.scss'
 
 const ACCOUNTS = [
@@ -20,17 +22,80 @@ const ACCOUNTS = [
 ]
 
 function Profile() {
+  const dispatch = useDispatch()
   const user = useSelector((state) => state.auth.user)
+  const loading = useSelector((state) => state.auth.loading)
+
+  const [isEditing, setIsEditing] = useState(false)
+  const [localFirstName, setLocalFirstName] = useState('')
+  const [localLastName, setLocalLastName] = useState('')
+
+  function handleEditClick() {
+    setLocalFirstName(user?.firstName ?? '')
+    setLocalLastName(user?.lastName ?? '')
+    setIsEditing(true)
+  }
+
+  async function handleSave() {
+    const result = await dispatch(
+      updateProfileAsync({ firstName: localFirstName, lastName: localLastName })
+    )
+    if (updateProfileAsync.fulfilled.match(result)) {
+      setIsEditing(false)
+    }
+  }
+
+  function handleCancel() {
+    setLocalFirstName(user?.firstName ?? '')
+    setLocalLastName(user?.lastName ?? '')
+    setIsEditing(false)
+  }
 
   return (
     <div className={styles.bgDark}>
       <div className={styles.header}>
-        <h1>
-          Welcome back
-          <br />
-          {user?.firstName} {user?.lastName}!
-        </h1>
-        <button className={styles.editButton}>Edit Name</button>
+        <h1>Welcome back{!isEditing && <><br />{user?.firstName} {user?.lastName}!</>}</h1>
+
+        {isEditing ? (
+          <div className={styles.editForm}>
+            <div className={styles.editInputs}>
+              <input
+                className={styles.editInput}
+                type="text"
+                value={localFirstName}
+                onChange={(e) => setLocalFirstName(e.target.value)}
+                aria-label="First name"
+              />
+              <input
+                className={styles.editInput}
+                type="text"
+                value={localLastName}
+                onChange={(e) => setLocalLastName(e.target.value)}
+                aria-label="Last name"
+              />
+            </div>
+            <div className={styles.editActions}>
+              <button
+                className={styles.editActionButton}
+                onClick={handleSave}
+                disabled={loading}
+              >
+                {loading ? 'Saving…' : 'Save'}
+              </button>
+              <button
+                className={styles.editActionButton}
+                onClick={handleCancel}
+                disabled={loading}
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
+        ) : (
+          <button className={styles.editButton} onClick={handleEditClick}>
+            Edit Name
+          </button>
+        )}
       </div>
 
       <h2 className={styles.srOnly}>Accounts</h2>
