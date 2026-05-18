@@ -6,10 +6,12 @@ $color-text-dark:  #222;
 $color-white:      #fff;
 $color-border:     #ccc;
 $color-black:      #000;
+$color-error:      #cc0000;
 
 // ── Typography ────────────────────────────────────────────────────────────────
 $font-family-base: Avenir, Helvetica, Arial, sans-serif;
 
 // ── Breakpoints ───────────────────────────────────────────────────────────────
+$bp-sm: 480px;
 $bp-md: 720px;
 $bp-lg: 920px;

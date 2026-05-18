@@ -2,6 +2,7 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import Home from '../pages/Home/Home'
 import Login from '../pages/Login/Login'
 import Profile from '../pages/Profile/Profile'
+import NotFound from '../pages/NotFound/NotFound'
 import Layout from '../components/Layout/Layout.jsx'
 import ProtectedRoute from '../components/ProtectedRoute/ProtectedRoute.jsx'
 
@@ -15,6 +16,7 @@ function AppRouter() {
           <Route element={<ProtectedRoute />}>
             <Route path="/profile" element={<Profile />} />
           </Route>
+          <Route path="*" element={<NotFound />} />
         </Route>
       </Routes>
     </BrowserRouter>

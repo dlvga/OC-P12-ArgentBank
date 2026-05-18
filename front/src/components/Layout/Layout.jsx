@@ -1,15 +1,13 @@
 import Navbar from '../Navbar/Navbar'
 import Footer from '../Footer/Footer'
 import styles from './Layout.module.scss'
-import { Outlet, useLocation } from "react-router-dom";
+import { Outlet } from 'react-router-dom'
 
 function Layout() {
-  const { pathname } = useLocation()
-
   return (
     <>
       <Navbar />
-      <main className={`${styles.main} ${['/login', '/profile'].includes(pathname) ? styles.mainDark : ''}`}>
+      <main className={styles.main}>
         <Outlet />
       </main>
       <Footer />

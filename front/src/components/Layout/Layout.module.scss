@@ -1,9 +1,7 @@
 @use '../../styles/variables' as *;
 
 .main {
+  display: flex;
+  flex-direction: column;
   flex: 1;
-}
-
-.mainDark {
-  background-color: $color-dark-bg;
 }

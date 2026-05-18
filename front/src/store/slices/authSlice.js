@@ -17,8 +17,11 @@ export const loginAsync = createAsyncThunk(
 
       return { user, rememberMe }
     } catch (err) {
+      const status = err.response?.status
       const message =
-        err.response?.data?.message || 'Identifiants incorrects. Veuillez réessayer.'
+        status === 400 || status === 401
+          ? 'Invalid email or password.'
+          : 'Server error, please try again later.'
       return rejectWithValue(message)
     }
   }
@@ -32,7 +35,7 @@ export const fetchUserProfile = createAsyncThunk(
       return res.data.body
     } catch (err) {
       const message =
-        err.response?.data?.message || 'Session expirée. Veuillez vous reconnecter.'
+        err.response?.data?.message || 'Session expired. Please sign in again.'
       return rejectWithValue(message)
     }
   }
@@ -46,7 +49,7 @@ export const updateProfileAsync = createAsyncThunk(
       return res.data.body
     } catch (err) {
       const message =
-        err.response?.data?.message || 'Impossible de mettre à jour le profil.'
+        err.response?.data?.message || 'Could not update profile. Please try again.'
       return rejectWithValue(message)
     }
   }
@@ -68,6 +71,9 @@ const authSlice = createSlice({
   reducers: {
     setToken(state, action) {
       state.token = action.payload
+    },
+    clearError(state) {
+      state.error = null
     },
     logout() {
       localStorage.removeItem('token')
@@ -132,6 +138,6 @@ const authSlice = createSlice({
   },
 })
 
-export const { logout } = authSlice.actions
+export const { logout, clearError } = authSlice.actions
 
 export default authSlice.reducer

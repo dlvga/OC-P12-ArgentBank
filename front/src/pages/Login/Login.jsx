@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
-import { loginAsync } from '../../store/slices/authSlice'
+import { loginAsync, clearError } from '../../store/slices/authSlice'
 import styles from './Login.module.scss'
 
 function Login() {
@@ -23,15 +23,22 @@ function Login() {
 
   function handleChange(e) {
     const { name, value, type, checked } = e.target
+    if (error) dispatch(clearError())
     setFormData((prev) => ({
       ...prev,
       [name]: type === 'checkbox' ? checked : value,
     }))
   }
 
-  async function handleSubmit(e) {
+  function handleSubmit(e) {
     e.preventDefault()
-    dispatch(loginAsync({ email: formData.email, password: formData.password, rememberMe: formData.rememberMe }))
+    dispatch(
+      loginAsync({
+        email: formData.email,
+        password: formData.password,
+        rememberMe: formData.rememberMe,
+      })
+    )
   }
 
   return (
@@ -73,7 +80,7 @@ function Login() {
             <label htmlFor="remember-me">Remember me</label>
           </div>
           <button type="submit" className={styles.signInButton} disabled={loading}>
-            {loading ? 'Connexion…' : 'Sign In'}
+            {loading ? 'Logging in...' : 'Sign In'}
           </button>
         </form>
         {error && <p className={styles.errorMessage}>{error}</p>}

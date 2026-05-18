@@ -1,6 +1,7 @@
 @use '../../styles/variables' as *;
 
 .bgDark {
+  background-color: $color-dark-bg;
   flex: 1;
   display: flex;
   align-items: flex-start;
