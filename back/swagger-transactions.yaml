@@ -1,0 +1,405 @@
+swagger: '2.0'
+info:
+  title: Bank Argent API - Transactions
+  description: |
+    API endpoints for the Transactions feature (Phase 2).
+    Bank data (date, description, amount, balance, type) is read-only.
+    Only category and note are editable by the user via PATCH.
+    Category must be a slug from GET /transactions/categories.
+    Sending note: "" clears the note (no separate DELETE endpoint needed).
+  version: '1.0.0'
+  termsOfService: 'http://swagger.io/terms/'
+host: localhost:3001
+basePath: /api/v1
+schemes:
+  - http
+securityDefinitions:
+  Bearer:
+    type: apiKey
+    name: Authorization
+    in: header
+
+paths:
+
+  # ── 1. List all accounts ────────────────────────────────────────────────────
+  /user/accounts:
+    get:
+      tags:
+        - Transactions Module
+      summary: Get all user accounts
+      description: Returns all accounts belonging to the authenticated user.
+      security:
+        - Bearer: []
+      parameters:
+        - in: header
+          name: Authorization
+          description: Attach Bearer JWT token
+          required: true
+          type: string
+      produces:
+        - application/json
+      responses:
+        '200':
+          description: Accounts retrieved successfully
+          schema:
+            type: object
+            properties:
+              status:
+                type: integer
+                example: 200
+              message:
+                type: string
+                example: Accounts retrieved successfully
+              body:
+                type: array
+                items:
+                  $ref: '#/definitions/Account'
+        '401':
+          description: Unauthorized – missing or invalid token
+        '500':
+          description: Internal Server Error
+
+  # ── 2. List available categories (feeds the dropdown) ──────────────────────
+  /transactions/categories:
+    get:
+      tags:
+        - Transactions Module
+      summary: Get available transaction categories
+      description: |
+        Returns the list of all categories available for the Category dropdown.
+        This endpoint is called once when the edit UI opens to populate the
+        Select Dropdown.
+        Authentication is required so the list can be personalised in the future.
+      security:
+        - Bearer: []
+      parameters:
+        - in: header
+          name: Authorization
+          description: Attach Bearer JWT token
+          required: true
+          type: string
+      produces:
+        - application/json
+      responses:
+        '200':
+          description: Categories retrieved successfully
+          schema:
+            type: object
+            properties:
+              status:
+                type: integer
+                example: 200
+              message:
+                type: string
+                example: Categories retrieved successfully
+              body:
+                type: array
+                items:
+                  $ref: '#/definitions/Category'
+                example:
+                  - id: food
+                    label: Food
+                  - id: travel
+                    label: Travel
+                  - id: entertainment
+                    label: Entertainment
+                  - id: healthcare
+                    label: Healthcare
+                  - id: utilities
+                    label: Utilities
+                  - id: other
+                    label: Other
+        '401':
+          description: Unauthorized – missing or invalid token
+        '500':
+          description: Internal Server Error
+
+  # ── 3. List transactions for an account (current month) ────────────────────
+  /user/accounts/{accountId}/transactions:
+    get:
+      tags:
+        - Transactions Module
+      summary: Get transactions for an account
+      description: |
+        Returns all transactions for a given account.
+        Defaults to the current month. Supports optional month filter and pagination.
+      security:
+        - Bearer: []
+      parameters:
+        - in: header
+          name: Authorization
+          description: Attach Bearer JWT token
+          required: true
+          type: string
+        - in: path
+          name: accountId
+          description: Unique identifier of the account
+          required: true
+          type: string
+        - in: query
+          name: month
+          description: Month to filter (format YYYY-MM). Defaults to the current month.
+          required: false
+          type: string
+          pattern: '^\d{4}-(0[1-9]|1[0-2])$'
+        - in: query
+          name: page
+          description: Page number (1-based)
+          required: false
+          type: integer
+          minimum: 1
+          default: 1
+        - in: query
+          name: limit
+          description: Number of transactions per page
+          required: false
+          type: integer
+          minimum: 1
+          default: 10
+      produces:
+        - application/json
+      responses:
+        '200':
+          description: Transactions retrieved successfully
+          schema:
+            type: object
+            properties:
+              status:
+                type: integer
+                example: 200
+              message:
+                type: string
+                example: Transactions retrieved successfully
+              body:
+                $ref: '#/definitions/TransactionList'
+        '400':
+          description: Bad request – invalid query parameters
+        '401':
+          description: Unauthorized – missing or invalid token
+        '404':
+          description: Account not found
+        '500':
+          description: Internal Server Error
+
+  # ── 4. Get / 5. Patch a single transaction ──────────────────────────────────
+  /user/accounts/{accountId}/transactions/{transactionId}:
+    get:
+      tags:
+        - Transactions Module
+      summary: Get a single transaction
+      description: Returns the full detail of a specific transaction, including read-only bank data and user-editable fields (category, note).
+      security:
+        - Bearer: []
+      parameters:
+        - in: header
+          name: Authorization
+          description: Attach Bearer JWT token
+          required: true
+          type: string
+        - in: path
+          name: accountId
+          description: Unique identifier of the account
+          required: true
+          type: string
+        - in: path
+          name: transactionId
+          description: Unique identifier of the transaction
+          required: true
+          type: string
+      produces:
+        - application/json
+      responses:
+        '200':
+          description: Transaction retrieved successfully
+          schema:
+            type: object
+            properties:
+              status:
+                type: integer
+                example: 200
+              message:
+                type: string
+                example: Transaction retrieved successfully
+              body:
+                $ref: '#/definitions/Transaction'
+        '401':
+          description: Unauthorized – missing or invalid token
+        '404':
+          description: Transaction not found
+        '500':
+          description: Internal Server Error
+
+    patch:
+      tags:
+        - Transactions Module
+      summary: Update editable fields of a transaction
+      description: |
+        Updates the note and/or category of a transaction.
+        At least one field must be provided.
+        category must be a value returned by GET /transactions/categories.
+        Bank data (date, description, amount, balance, type) cannot be modified.
+      security:
+        - Bearer: []
+      parameters:
+        - in: header
+          name: Authorization
+          description: Attach Bearer JWT token
+          required: true
+          type: string
+        - in: path
+          name: accountId
+          description: Unique identifier of the account
+          required: true
+          type: string
+        - in: path
+          name: transactionId
+          description: Unique identifier of the transaction
+          required: true
+          type: string
+        - in: body
+          name: body
+          description: Fields to update. Both are optional but at least one must be present.
+          required: true
+          schema:
+            $ref: '#/definitions/TransactionPatch'
+      produces:
+        - application/json
+      responses:
+        '200':
+          description: Transaction updated successfully
+          schema:
+            type: object
+            properties:
+              status:
+                type: integer
+                example: 200
+              message:
+                type: string
+                example: Transaction updated successfully
+              body:
+                $ref: '#/definitions/Transaction'
+        '400':
+          description: Bad request – empty body, unknown category, or invalid fields
+        '401':
+          description: Unauthorized – missing or invalid token
+        '404':
+          description: Transaction not found
+        '500':
+          description: Internal Server Error
+
+
+# ── Definitions ──────────────────────────────────────────────────────────────
+definitions:
+
+  Account:
+    type: object
+    properties:
+      id:
+        type: string
+        description: Unique account identifier
+        example: '6270d914b2a23'
+      title:
+        type: string
+        description: Account name
+        example: 'Argent Bank Checking'
+      accountNumber:
+        type: string
+        description: Masked account number
+        example: 'x8349'
+      balance:
+        type: number
+        format: double
+        description: Current account balance
+        example: 2082.79
+      balanceType:
+        type: string
+        description: Balance label shown in the UI
+        example: 'Available Balance'
+
+  Category:
+    type: object
+    description: A selectable category for the transaction dropdown
+    properties:
+      id:
+        type: string
+        description: Category identifier sent in PATCH body
+        example: 'food'
+      label:
+        type: string
+        description: Human-readable label displayed in the dropdown
+        example: 'Food'
+
+  Transaction:
+    type: object
+    properties:
+      id:
+        type: string
+        description: Unique transaction identifier
+        example: 'txn_001'
+      date:
+        type: string
+        format: date
+        description: Transaction date – read-only
+        example: '2020-06-20'
+      description:
+        type: string
+        description: Merchant name or transaction description – read-only
+        example: 'Golden Sun Bakery'
+      amount:
+        type: number
+        format: double
+        description: Transaction amount – read-only
+        example: 5.00
+      balance:
+        type: number
+        format: double
+        description: Account running balance after this transaction – read-only
+        example: 2082.79
+      type:
+        type: string
+        description: Transaction type – read-only
+        example: 'Electronic'
+      category:
+        type: string
+        description: Category id from GET /transactions/categories – editable via dropdown
+        example: 'food'
+      note:
+        type: string
+        description: User-defined free-text note – editable via text input
+        example: 'Weekly groceries'
+
+  TransactionList:
+    type: object
+    properties:
+      transactions:
+        type: array
+        items:
+          $ref: '#/definitions/Transaction'
+      currentPage:
+        type: integer
+        description: Current page number (1-based)
+        example: 1
+      totalPages:
+        type: integer
+        description: Total number of pages
+        example: 3
+      totalItems:
+        type: integer
+        description: Total number of transactions matching the query
+        example: 27
+
+  TransactionPatch:
+    type: object
+    description: |
+      Editable fields of a transaction. At least one field must be provided.
+      Both fields can be sent together in a single request.
+      Send note: "" to clear the note.
+    properties:
+      category:
+        type: string
+        description: Category slug from GET /transactions/categories
+        example: 'food'
+      note:
+        type: string
+        description: Free-text note. Send empty string to clear.
+        example: 'Weekly groceries'
