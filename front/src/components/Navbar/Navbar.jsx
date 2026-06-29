@@ -1,4 +1,5 @@
-import { Link, useNavigate } from 'react-router-dom'
+import { useEffect, useRef } from 'react'
+import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { useSelector, useDispatch } from 'react-redux'
 import { logout } from '../../store/slices/authSlice'
 import styles from './Navbar.module.scss'
@@ -6,12 +7,25 @@ import styles from './Navbar.module.scss'
 function Navbar() {
   const dispatch = useDispatch()
   const navigate = useNavigate()
+  const location = useLocation()
+  const signOutPending = useRef(false)
   const isAuthenticated = useSelector((state) => state.auth.isAuthenticated)
   const user = useSelector((state) => state.auth.user)
 
+  useEffect(() => {
+    if (signOutPending.current && location.pathname === '/') {
+      signOutPending.current = false
+      dispatch(logout())
+    }
+  }, [location.pathname, dispatch])
+
   function handleSignOut() {
-    dispatch(logout())
-    navigate('/')
+    if (location.pathname === '/') {
+      dispatch(logout())
+      return
+    }
+    signOutPending.current = true
+    navigate('/', { replace: true })
   }
 
   return (

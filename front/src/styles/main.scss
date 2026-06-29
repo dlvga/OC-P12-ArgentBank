@@ -1,12 +1,7 @@
 @use 'variables' as *;
 @use 'mixins' as *;
 
-// ── Reset / Base ──────────────────────────────────────────────────────────────
-*,
-*::before,
-*::after {
-  //box-sizing: border-box;
-}
+// ── Base ──────────────────────────────────────────────────────────────
 
 html {
   font-family: $font-family-base;
